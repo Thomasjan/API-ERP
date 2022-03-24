@@ -1,6 +1,0 @@
-
-node-mssql : https://github.com/tediousjs/node-mssql
-
-ConnectionPool : https://github.com/tediousjs/node-mssql/blob/master/lib/base/connection-pool.js
-
-Request : https://github.com/tediousjs/node-mssql/blob/master/lib/base/request.js

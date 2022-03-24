@@ -16,4 +16,6 @@ const posts = [
     }
 ]
 
-module.exports.getPostById = id => posts[id - 1];
+const getPostById = id => posts[id - 1]
+
+module.exports = getPostById
