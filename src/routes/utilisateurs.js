@@ -27,4 +27,17 @@ router.get('/nombre', (req, res) => {
         .catch(error => res.status(500).json({ Erreur: error.toString() }))
 })
 
+
+router.get('/getGestimumUsers', (req, res) => {
+    Utilisateurs.getGestimumUsers()
+        .then(data => res.json(data))
+        .catch(error => res.status(500).json({ Erreur: error.toString() }))
+})
+
+router.get('/getGestimumUsersOfClient/:code', (req, res) => {
+    Utilisateurs.getGestimumUsersOfClient(req.params.code)
+        .then(data => res.json(data))
+        .catch(error => res.status(500).json({ Erreur: error.toString() }))
+})
+
 module.exports = router

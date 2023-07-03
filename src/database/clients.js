@@ -73,6 +73,22 @@ class Clients {
             clients: res.recordset
         }
     }
+
+
+
+    async getGestimumClients() {
+        const pool = await mssql.connect(config)
+        const sql = `SELECT PCF_CODE, PCF_RS, PCF_EMAIL, PCF_RUE, PCF_CP, PCF_VILLE, PAY_CODE, PCF_TYPE  
+                    FROM TIERS
+                    ORDER BY PCF_RS, PCF_TYPE`;
+        const res = await pool.request().query(sql)
+        return {
+            count: res.recordset.length,
+            clients: res.recordset
+        }
+    }
+
+    
 }
 
 module.exports = new Clients()
