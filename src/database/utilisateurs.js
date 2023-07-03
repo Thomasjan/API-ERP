@@ -49,6 +49,37 @@ class Utilisateurs {
             utilisateurs: res.recordset
         }
     }
+
+    
+
+    async getGestimumUsers() {
+        const pool = await mssql.connect(config)
+        const sql = `SELECT CCT_NUMERO, CCT_CODE, CCT_PRENOM, CCT_NOM, CCT_EMAIL, PCF_RS, CCT_ORIGIN, PCF_TYPE 
+                    FROM CONTACTS, TIERS
+                    WHERE CONTACTS.CCT_ORIGIN = TIERS.PCF_CODE AND TIERS.PCF_TYPE ='C'
+                    ORDER BY CCT_NOM, CASE WHEN TIERS.PCF_TYPE = 'C' THEN 1 ELSE 2 END`;
+        const res = await pool.request().query(sql)
+        return {
+            count: res.recordset.length,
+            users: res.recordset
+        }
+    }
+
+    async getGestimumUsersOfClient(code) {
+        const pool = await mssql.connect(config)
+        const sql = `SELECT CCT_NUMERO, CCT_CODE, CCT_PRENOM, CCT_NOM, CCT_EMAIL, PCF_RS, CCT_ORIGIN  
+                    FROM CONTACTS, TIERS
+                    WHERE CONTACTS.CCT_ORIGIN = TIERS.PCF_CODE
+                    AND CONTACTS.CCT_ORIGIN = '${code}'
+                    AND TIERS.PCF_TYPE ='C'
+                    ORDER BY CCT_NOM `;
+        // const newString = mb_convert_encoding(sql, "UTF-8", "auto");
+        const res = await pool.request().query(sql)
+        return {
+            count: res.recordset.length,
+            users: res.recordset
+        }
+    }
 }
 
 module.exports = new Utilisateurs()

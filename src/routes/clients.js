@@ -39,4 +39,15 @@ router.get('/nombre', (req, res) => {
         .catch(error => res.status(500).json({ Erreur: error.toString() }))
 })
 
+
+router.get('/getGestimumClients', (req, res) => {
+    Clients.getGestimumClients()
+        .then(data => res.json(data))
+        .catch(error => res.status(500).json({ Erreur: error.toString() }))
+})
+
+
+
 module.exports = router
+
+
