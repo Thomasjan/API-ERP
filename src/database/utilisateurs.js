@@ -73,7 +73,6 @@ class Utilisateurs {
                     AND CONTACTS.CCT_ORIGIN = '${code}'
                     AND TIERS.PCF_TYPE ='C'
                     ORDER BY CCT_NOM `;
-        // const newString = mb_convert_encoding(sql, "UTF-8", "auto");
         const res = await pool.request().query(sql)
         return {
             count: res.recordset.length,
