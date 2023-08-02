@@ -46,6 +46,12 @@ router.get('/getGestimumClients', (req, res) => {
         .catch(error => res.status(500).json({ Erreur: error.toString() }))
 })
 
+router.get('/getGestimumClientsQuery/:query', (req, res) => {
+    Clients.getGestimumClientsQuery(req.params.query)
+        .then(data => res.json(data))
+        .catch(error => res.status(500).json({ Erreur: error.toString() }))
+})
+
 
 
 module.exports = router
