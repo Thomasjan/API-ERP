@@ -50,14 +50,12 @@ class Utilisateurs {
         }
     }
 
-    
-
     async getGestimumUsers() {
         const pool = await mssql.connect(config)
         const sql = `SELECT CCT_NUMERO, CCT_CODE, CCT_PRENOM, CCT_NOM, CCT_EMAIL, PCF_RS, CCT_ORIGIN, PCF_TYPE 
                     FROM CONTACTS, TIERS
                     WHERE CONTACTS.CCT_ORIGIN = TIERS.PCF_CODE AND TIERS.PCF_TYPE ='C'
-                    ORDER BY CCT_NOM, CASE WHEN TIERS.PCF_TYPE = 'C' THEN 1 ELSE 2 END`;
+                    ORDER BY CCT_NOM, CASE WHEN TIERS.PCF_TYPE = 'C' THEN 1 ELSE 2 END`
         const res = await pool.request().query(sql)
         return {
             count: res.recordset.length,
@@ -72,7 +70,7 @@ class Utilisateurs {
                     WHERE CONTACTS.CCT_ORIGIN = TIERS.PCF_CODE
                     AND CONTACTS.CCT_ORIGIN = '${code}'
                     AND TIERS.PCF_TYPE ='C'
-                    ORDER BY CCT_NOM `;
+                    ORDER BY CCT_NOM `
         const res = await pool.request().query(sql)
         return {
             count: res.recordset.length,
