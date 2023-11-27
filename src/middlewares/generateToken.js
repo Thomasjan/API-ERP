@@ -8,7 +8,7 @@ const app = express()
 
 // Middleware to validate API key
 module.exports = (req, res, next) => {
-    console.log(colors.red('Validating API key ...'))
+    console.log(colors.magenta('Validating API key ...'))
     const apiKey = req.headers['x-api-key'];
     
     // Check if the API key is valid
@@ -16,13 +16,14 @@ module.exports = (req, res, next) => {
         console.log(colors.green('Access granted !'))
         generateToken(req, res, next);
     } else {
+        console.log(colors.red('Access denied !'))
       res.status(401).json({ message: 'Unauthorized' });
     }
   };
 
 
   const generateToken = async (req, res, next) => {
-    console.log(colors.red('Generating token ...'))
+    console.log(colors.magenta('Generating token ...'))
     const payload = { 
       // userId: userId,
       // userRole: userRole,
