@@ -2,35 +2,16 @@ const mssql = require('mssql')
 const config = require('./config')
 
 
-const DISPLAY = `
-    AFF_CODE AS [code],
-    AFF_LIB AS [libelle],
-    AFF_ETAT AS [etat],
-    AFF_GROUP1 AS [group1],
-    AFF_GROUP2 AS [group2],
-    AFF_DT_DEB AS [dt_deb],
-    AFF_DT_FIN AS [dt_fin],
-    PCF_CODE AS [pcf_code],
-    AFF_DESC AS [desc],
-    AFF_BUGLAC AS [buglac],
-    AFF_TO_REC AS [to_rec],
-    AFF_DORT AS [dort],
-    ANA_CODE AS [ana_code],
-    AFF_DTCRE AS [dtcre],
-    AFF_USRCRE AS [usrcre],
-    AFF_DTMAJ AS [dtmaj],
-    AFF_USRMAJ AS [usrmaj],
-    AFF_NUMMAJ AS [nummaj]
-`;
+const FILTER = 'ACT_DORT = 0 OR ACT_DORT IS NULL'
 
-const FILTER = '(AFF_DORT = 0 OR AFF_DORT IS NULL)'
-    
-
-class Affaires {
+class Actions {
     async getAll(req, res) {
-        console.log(`Affaires.getAll()`.yellow);
+        console.log(`Actions.getAll()`.yellow);
         try {
-            let sql = `SELECT ${DISPLAY} FROM AFFAIRES WHERE ${FILTER} ORDER BY AFF_CODE`;
+            // let sql = `SELECT ${DISPLAY} FROM ACTIONS WHERE ${FILTER} ORDER BY AFF_CODE`;
+            //40 first actions
+            let sql = `SELECT * FROM ACTIONS ORDER BY ACT_DTMAJ DESC OFFSET 0 ROWS FETCH NEXT 40 ROWS ONLY`;
+    
     
             // Check if there are query parameters
             const queryParams = req.query;
@@ -42,7 +23,7 @@ class Affaires {
                     .map(([key, value]) => `${key}='${value}'`)
                     .join(' AND ');
     
-                sql = `SELECT * FROM AFFAIRES WHERE ${FILTER} AND ${whereConditions} ORDER BY AFF_CODE`;
+                sql = `SELECT * FROM ACTIONS WHERE ${whereConditions} ORDER BY ACT_DTMAJ DESC OFFSET 0 ROWS FETCH NEXT 40 ROWS ONLY`;
                 // sql = `SELECT ${DISPLAY} FROM AFFAIRES WHERE ${FILTER} AND ${whereConditions} ORDER BY AFF_CODE`;
             }
             
@@ -51,7 +32,7 @@ class Affaires {
     
             res.json({
                 count: result.recordset.length,
-                affaires: result.recordset
+                actions: result.recordset
             });
         } catch (error) {
             console.log(error);
@@ -62,4 +43,4 @@ class Affaires {
     
 }
 
-module.exports = new Affaires()
+module.exports = new Actions()
