@@ -1,9 +1,11 @@
+require('dotenv').config();
+
 const config = {
-    server: 'SRV-SQL',
-    database: 'GESTIMUM_SA',
-    user: 'api.nodejs',
-    password: 'kl77W4iwYxKsRfsTmOWQ',
-    port: 1433,
+    server: process.env.SQL_SERVER,
+    database: process.env.SQL_DATABASE,
+    user: process.env.SQL_USER,
+    password: process.env.SQL_PASSWORD,
+    port: Number(process.env.SQL_PORT),
     options: {
         encrypt: false
     }
