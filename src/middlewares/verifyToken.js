@@ -4,8 +4,9 @@ const colors = require('colors');
 
 module.exports = (req, res, next) => {
     // const token = req.header('auth-token');
+    console.log(colors.cyan('Vérification du token...'))
     const token = req.token;
-    // console.log('token: ',token)
+    // console.log(colors.cyan('Token : ' + token))
     if (!token) return res.status(401).json({ Erreur: 'Accès refusé' });
 
     try {
