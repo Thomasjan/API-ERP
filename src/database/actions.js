@@ -9,7 +9,8 @@ class Actions {
         console.log(`Actions.getAll()`.yellow);
         try {
             // Default SQL query for all fields
-            let sql = `SELECT * FROM ACTIONS ORDER BY ACT_DTMAJ DESC OFFSET 0 ROWS FETCH NEXT 40 ROWS ONLY`;
+            let displayFields = "*"
+            let sql = `SELECT ${displayFields} FROM ACTIONS ORDER BY ACT_DTMAJ DESC OFFSET 0 ROWS FETCH NEXT 40 ROWS ONLY`;
     
             // Check if there are query parameters
             const queryParams = req.query;
@@ -21,7 +22,7 @@ class Actions {
                 if (queryParams.display) {
                     try {
                         // Remove single quotes and parse the display parameter into an array
-                        const displayFields = JSON.parse(queryParams.display);
+                        displayFields = JSON.parse(queryParams.display);
                 
                         // Check if displayFields is an array
                         if (Array.isArray(displayFields)) {
@@ -50,7 +51,7 @@ class Actions {
                     .join(' AND ');
     
                 if (whereConditions) {
-                    sql = `SELECT * FROM ACTIONS WHERE ${whereConditions} ORDER BY ACT_DTMAJ DESC OFFSET 0 ROWS FETCH NEXT 40 ROWS ONLY`;
+                    sql = `SELECT ${displayFields} FROM ACTIONS WHERE ${whereConditions} ORDER BY ACT_DTMAJ DESC OFFSET 0 ROWS FETCH NEXT 40 ROWS ONLY`;
                 }
             }
     
