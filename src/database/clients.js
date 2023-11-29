@@ -4,6 +4,9 @@ const config = require('./config')
 const DISPLAY = `
     PCF_CODE AS code,
     PCF_RS AS raison_sociale,
+    PCF_RUE AS adresse,
+    PCF_CP AS code_postal,
+    PCF_VILLE AS ville,
     FAT_CODE AS famille,
     SFT_CODE AS sous_famille,
     ISNULL(XXX_VERBUI, '') AS version_erp,
