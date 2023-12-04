@@ -2,17 +2,29 @@ const mssql = require('mssql')
 const config = require('./config')
 
 const DISPLAY = `
-    PCF_CODE AS code,
-    PCF_RS AS raison_sociale,
-    PCF_RUE AS adresse,
-    PCF_CP AS code_postal,
-    PCF_VILLE AS ville,
-    FAT_CODE AS famille,
-    SFT_CODE AS sous_famille,
+    PCF_CODE,
+    PCF_RS,
+    PCF_RUE,
+    PCF_CP,
+    PCF_VILLE,
+    FAT_CODE,
+    SFT_CODE,
     ISNULL(XXX_VERBUI, '') AS version_erp,
     ISNULL(XXX_EA09, '') AS version_ws,
     ISNULL(PCF_DORT, 0) AS sommeil
 `
+// const DISPLAY = `
+//     PCF_CODE AS code,
+//     PCF_RS AS raison_sociale,
+//     PCF_RUE AS adresse,
+//     PCF_CP AS code_postal,
+//     PCF_VILLE AS ville,
+//     FAT_CODE AS famille,
+//     SFT_CODE AS sous_famille,
+//     ISNULL(XXX_VERBUI, '') AS version_erp,
+//     ISNULL(XXX_EA09, '') AS version_ws,
+//     ISNULL(PCF_DORT, 0) AS sommeil
+// `
 
 const FILTER = 'PCF_DORT = 0 OR PCF_DORT IS NULL'
 
