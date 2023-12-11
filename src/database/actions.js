@@ -11,7 +11,7 @@ class Actions {
 
         try {
             // Default SQL query for all fields
-            let sql = `SELECT ${displayFields} FROM ACTIONS ORDER BY ACT_DTMAJ DESC OFFSET 0 ROWS FETCH NEXT 40 ROWS ONLY`;
+            let sql = `SELECT ${displayFields} FROM ACTIONS ORDER BY ACT_DTMAJ DESC `;
     
             // Check if there are query parameters
             const queryParams = req.query;
@@ -26,7 +26,7 @@ class Actions {
                     .join(' AND ');
     
                 if (whereConditions) {
-                    sql = `SELECT ${displayFields} FROM ACTIONS WHERE ${whereConditions} ORDER BY ACT_DTMAJ DESC OFFSET 0 ROWS FETCH NEXT 40 ROWS ONLY`;
+                    sql = `SELECT ${displayFields} FROM ACTIONS WHERE ${whereConditions} ORDER BY ACT_DTMAJ DESC `;
                 }
             }
     
@@ -42,6 +42,44 @@ class Actions {
             res.status(500).json({ Erreur: error.toString() });
         }
     }
+
+   
+
+    async updateAction(req, res) {
+        console.log(`Actions.updateAction()`.yellow);
+        const id = req.params.id;
+        const data = req.body;
+        console.log(data);
+    
+        try {
+            const pool = await mssql.connect(config);
+    
+            // Construct SET clause dynamically
+            const setClause = Object.keys(data)
+                .map(key => `${key} = @${key}`)
+                .join(', ');
+    
+            const sql = `UPDATE ACTIONS SET ${setClause} WHERE ACT_NUMERO = @id`;
+    
+            // Create input parameters for each key in the data object
+            const request = pool.request();
+            Object.keys(data).forEach(key => {
+                request.input(key, mssql.NVarChar, data[key]);
+            });
+            request.input('id', mssql.NVarChar, id);
+    
+            const result = await request.query(sql);
+    
+            res.json({
+                count: result.rowsAffected[0],
+                action: data
+            });
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ Erreur: error.toString() });
+        }
+    }
+    
     
 }
 
