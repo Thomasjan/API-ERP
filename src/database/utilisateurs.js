@@ -29,7 +29,9 @@ class Utilisateurs {
 
     async getOne(code) {
         const pool = await mssql.connect(config)
-        const sql = `SELECT ${DISPLAY} FROM USERS WHERE USR_NAME = @code`
+        const sql = `SELECT CCT_NUMERO, CCT_CODE, CCT_PRENOM, CCT_NOM, CCT_EMAIL, CCT_TELM, CCT_ORIGIN 
+                FROM CONTACTS 
+                WHERE CCT_NUMERO = @code`
         const res = await pool.request()
             .input('code', mssql.VarChar(USR_NAME_SIZE), code)
             .query(sql)
