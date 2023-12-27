@@ -29,7 +29,9 @@ class Utilisateurs {
 
     async getOne(code) {
         const pool = await mssql.connect(config)
-        const sql = `SELECT ${DISPLAY} FROM USERS WHERE USR_NAME = @code`
+        const sql = `SELECT CCT_NUMERO, CCT_CODE, CCT_PRENOM, CCT_NOM, CCT_EMAIL, CCT_TELM, CCT_ORIGIN 
+                FROM CONTACTS 
+                WHERE CCT_NUMERO = @code`
         const res = await pool.request()
             .input('code', mssql.VarChar(USR_NAME_SIZE), code)
             .query(sql)
@@ -56,7 +58,7 @@ class Utilisateurs {
         const pool = await mssql.connect(config)
         const sql = `SELECT CCT_NUMERO, CCT_CODE, CCT_PRENOM, CCT_NOM, CCT_EMAIL, PCF_RS, CCT_ORIGIN, PCF_TYPE 
                     FROM CONTACTS, TIERS
-                    WHERE CONTACTS.CCT_ORIGIN = TIERS.PCF_CODE AND TIERS.PCF_TYPE ='C'
+                    WHERE CONTACTS.CCT_ORIGIN = TIERS.PCF_CODE AND TIERS.PCF_TYPE IN ('C', 'P')
                     ORDER BY CCT_NOM, CASE WHEN TIERS.PCF_TYPE = 'C' THEN 1 ELSE 2 END`;
         const res = await pool.request().query(sql)
         return {
@@ -71,7 +73,7 @@ class Utilisateurs {
                     FROM CONTACTS, TIERS
                     WHERE CONTACTS.CCT_ORIGIN = TIERS.PCF_CODE
                     AND CONTACTS.CCT_ORIGIN = '${code}'
-                    AND TIERS.PCF_TYPE ='C'
+                    AND TIERS.PCF_TYPE IN ('C', 'P')
                     ORDER BY CCT_NOM `;
         const res = await pool.request().query(sql)
         return {

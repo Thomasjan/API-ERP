@@ -2,14 +2,29 @@ const mssql = require('mssql')
 const config = require('./config')
 
 const DISPLAY = `
-    PCF_CODE AS code,
-    PCF_RS AS raison_sociale,
-    FAT_CODE AS famille,
-    SFT_CODE AS sous_famille,
+    PCF_CODE,
+    PCF_RS,
+    PCF_RUE,
+    PCF_CP,
+    PCF_VILLE,
+    FAT_CODE,
+    SFT_CODE,
     ISNULL(XXX_VERBUI, '') AS version_erp,
     ISNULL(XXX_EA09, '') AS version_ws,
     ISNULL(PCF_DORT, 0) AS sommeil
 `
+// const DISPLAY = `
+//     PCF_CODE AS code,
+//     PCF_RS AS raison_sociale,
+//     PCF_RUE AS adresse,
+//     PCF_CP AS code_postal,
+//     PCF_VILLE AS ville,
+//     FAT_CODE AS famille,
+//     SFT_CODE AS sous_famille,
+//     ISNULL(XXX_VERBUI, '') AS version_erp,
+//     ISNULL(XXX_EA09, '') AS version_ws,
+//     ISNULL(PCF_DORT, 0) AS sommeil
+// `
 
 const FILTER = 'PCF_DORT = 0 OR PCF_DORT IS NULL'
 
@@ -76,23 +91,25 @@ class Clients {
 
     async getGestimumClients() {
         const pool = await mssql.connect(config)
-        const sql = `SELECT PCF_CODE, PCF_RS, PCF_EMAIL, PCF_RUE, PCF_CP, PCF_VILLE, PAY_CODE, PCF_TYPE  
-                    FROM TIERS
-                    ORDER BY PCF_RS, PCF_TYPE`;
+        const sql = `
+            SELECT PCF_CODE, PCF_RS, PCF_EMAIL, PCF_RUE, PCF_CP, PCF_VILLE, PAY_CODE, PCF_TYPE
+            FROM TIERS
+            ORDER BY PCF_RS, PCF_TYPE
+        `
         const res = await pool.request().query(sql)
         return {
             count: res.recordset.length,
             clients: res.recordset
         }
     }
-
-
-    async getGestimumClientsQuery(query) {
+  
+  async getGestimumClientsQuery(query) {
         const pool = await mssql.connect(config)
         const sql = `SELECT PCF_CODE, PCF_RS, PCF_EMAIL, PCF_RUE, PCF_CP, PCF_VILLE, PAY_CODE, PCF_TYPE  
                     FROM TIERS
                     WHERE PCF_RS LIKE '%${query}%' OR PCF_CODE LIKE '%${query}%' OR PCF_EMAIL LIKE '%${query}%'
                     ORDER BY PCF_RS, PCF_TYPE`;
+
         const res = await pool.request().query(sql)
         return {
             count: res.recordset.length,
@@ -100,9 +117,6 @@ class Clients {
         }
     }
 
-    
-
-    
 }
 
 module.exports = new Clients()
