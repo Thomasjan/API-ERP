@@ -42,8 +42,17 @@ app.use((req, res, next) => {
 
 
 
+const banner = `
+    ███████╗██████╗ ██████╗
+    ██╔════╝██╔══██╗██╔══██╗
+    █████╗  ██████╔╝██████╔╝
+    ██╔══╝  ██╔══██╗██╔═══╝
+    ███████╗██║  ██║██║
+    ╚══════╝╚═╝  ╚═╝╚═╝
+`;
 
 const PORT = process.env.PORT || 4000
 app.listen(PORT, () => {
+  console.log(colors.yellow(banner))
   console.log(colors.magenta(`API ERP interne démarrée sur le port ${colors.cyan(PORT)} ...`))
 })
