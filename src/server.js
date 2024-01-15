@@ -34,13 +34,9 @@ app.use('/api/v1/utilisateurs', generateToken, verifyToken, utilisateursRouter)
 app.use('/api/v1/posts', generateToken, verifyToken, postsRouter)
 
 
-
-
 app.use((req, res, next) => {
   res.status(404).json({ Erreur: 'Requête invalide' })
 })
-
-
 
 
 const PORT = process.env.PORT || 4000
