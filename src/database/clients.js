@@ -9,10 +9,13 @@ const DISPLAY = `
     PCF_VILLE,
     FAT_CODE,
     SFT_CODE,
-    ISNULL(XXX_VERBUI, '') AS version_erp,
-    ISNULL(XXX_EA09, '') AS version_ws,
     ISNULL(PCF_DORT, 0) AS sommeil
 `
+// TODO: ajouter les colonnes suivantes en parametre de requete (G-Ticket)
+// ISNULL(XXX_VERBUI, '') AS version_erp,
+// ISNULL(XXX_EA09, '') AS version_ws,
+
+
 // const DISPLAY = `
 //     PCF_CODE AS code,
 //     PCF_RS AS raison_sociale,
