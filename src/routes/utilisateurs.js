@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const { queryMiddleware } = require('../middlewares/queryParams')
 
 const Utilisateurs = require('../database/utilisateurs')
 
@@ -11,6 +12,18 @@ router.get('/', (req, res) => {
 
 router.get('/code/:code', (req, res) => {
     Utilisateurs.getOne(req.params.code)
+        .then(data => res.json(data))
+        .catch(error => res.status(500).json({ Erreur: error.toString() }))
+})
+
+router.get('/contacts', queryMiddleware, (req, res) => {
+    Utilisateurs.getContacts(req, res)
+        .then(data => res.json(data))
+        .catch(error => res.status(500).json({ Erreur: error.toString() }))
+})
+
+router.put('/update/:id', (req, res) => {
+    Utilisateurs.update(req, res)
         .then(data => res.json(data))
         .catch(error => res.status(500).json({ Erreur: error.toString() }))
 })

@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const {queryMiddleware} = require('../middlewares/queryParams')
+const { queryMiddleware } = require('../middlewares/queryParams')
 
 const Actions = require('./../database/actions')
 

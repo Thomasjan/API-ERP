@@ -1,16 +1,24 @@
 const express = require('express')
 const router = express.Router()
+const { queryMiddleware } = require('../middlewares/queryParams')
+
 
 const Clients = require('./../database/clients')
 
-router.get('/', (req, res) => {
-    Clients.getAll()
+router.get('/', queryMiddleware, (req, res) => {
+    Clients.getAll(req, res)
         .then(data => res.json(data))
         .catch(error => res.status(500).json({ Erreur: error.toString() }))
 })
 
 router.get('/code/:code', (req, res) => {
     Clients.getOne(req.params.code)
+        .then(data => res.json(data))
+        .catch(error => res.status(500).json({ Erreur: error.toString() }))
+})
+
+router.put('/update/:id', (req, res) => {
+    Clients.update(req, res)
         .then(data => res.json(data))
         .catch(error => res.status(500).json({ Erreur: error.toString() }))
 })

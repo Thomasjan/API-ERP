@@ -9,11 +9,12 @@ const DISPLAY = `
     PCF_VILLE,
     FAT_CODE,
     SFT_CODE,
+    ISNULL(XXX_VERBUI, '') AS version_erp,
+    ISNULL(XXX_EA09, '') AS version_ws,
     ISNULL(PCF_DORT, 0) AS sommeil
 `
 // TODO: ajouter les colonnes suivantes en parametre de requete (G-Ticket)
-// ISNULL(XXX_VERBUI, '') AS version_erp,
-// ISNULL(XXX_EA09, '') AS version_ws,
+
 
 
 // const DISPLAY = `
@@ -34,13 +35,41 @@ const FILTER = 'PCF_DORT = 0 OR PCF_DORT IS NULL'
 const PCF_CODE_SIZE = 20
 
 class Clients {
-    async getAll() {
-        const pool = await mssql.connect(config)
-        const sql = `SELECT ${DISPLAY} FROM TIERS WHERE ${FILTER} ORDER BY PCF_CODE`
-        const res = await pool.request().query(sql)
-        return {
-            count: res.recordset.length,
-            clients: res.recordset
+    async getAll(req, res) {
+        console.log(`Tiers.getAll()`.yellow);
+        const displayFields = req.displayFields || '*';
+
+        try {
+            // Default SQL query for all fields
+            let sql = `SELECT ${displayFields} FROM TIERS ORDER BY PCF_DTMAJ DESC`;
+    
+            // Check if there are query parameters
+            const queryParams = req.query;
+    
+            if (Object.keys(queryParams).length > 0) {
+                console.log('Query parameters found: ', queryParams);
+    
+                // Construct the WHERE clause based on other query parameters if needed
+                const whereConditions = Object.entries(queryParams)
+                    .filter(([key]) => key !== 'display') // Exclude 'display' from where conditions
+                    .map(([key, value]) => `${key}='${value}'`)
+                    .join(' AND ');
+    
+                if (whereConditions) {
+                    sql = `SELECT ${displayFields} FROM TIERS WHERE ${whereConditions} ORDER BY PCF_DTMAJ DESC`;
+                }
+            }
+            
+            const pool = await mssql.connect(config);
+            const result = await pool.request().query(sql);
+    
+            res.json({
+                count: result.recordset.length,
+                clients: result.recordset
+            });
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ Erreur: error.toString() });
         }
     }
 
@@ -60,6 +89,41 @@ class Clients {
         return {
             found: res.recordset.length > 0,
             client: res.recordset.length > 0 ? res.recordset[0] : null
+        }
+    }
+
+    async update(req, res) {
+        console.log(`Tiers.update()`.yellow);
+        const id = req.params.id;
+        const data = req.body;
+        console.log(data);
+    
+        try {
+            const pool = await mssql.connect(config);
+    
+            // Construct SET clause dynamically
+            const setClause = Object.keys(data)
+                .map(key => `${key} = @${key}`)
+                .join(', ');
+    
+            const sql = `UPDATE TIERS SET ${setClause} WHERE PCF_CODE = @id`;
+    
+            // Create input parameters for each key in the data object
+            const request = pool.request();
+            Object.keys(data).forEach(key => {
+                request.input(key, mssql.NVarChar, data[key]);
+            });
+            request.input('id', mssql.NVarChar, id);
+    
+            const result = await request.query(sql);
+    
+            res.json({
+                count: result.rowsAffected[0],
+                tiers: data
+            });
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ Erreur: error.toString() });
         }
     }
 

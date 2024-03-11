@@ -41,6 +41,80 @@ class Utilisateurs {
         }
     }
 
+    async getContacts(req, res) {
+        console.log(`Contacts.getAll()`.yellow);
+        const displayFields = req.displayFields || '*';
+
+        try {
+            // Default SQL query for all fields
+            let sql = `SELECT ${displayFields} FROM CONTACTS ORDER BY CCT_DTMAJ DESC`;
+    
+            // Check if there are query parameters
+            const queryParams = req.query;
+    
+            if (Object.keys(queryParams).length > 0) {
+                console.log('Query parameters found: ', queryParams);
+    
+                // Construct the WHERE clause based on other query parameters if needed
+                const whereConditions = Object.entries(queryParams)
+                    .filter(([key]) => key !== 'display') // Exclude 'display' from where conditions
+                    .map(([key, value]) => `${key}='${value}'`)
+                    .join(' AND ');
+    
+                if (whereConditions) {
+                    sql = `SELECT ${displayFields} FROM CONTACTS WHERE ${whereConditions} ORDER BY CCT_DTMAJ DESC`;
+                }
+            }
+            
+            console.log("SQL: ", sql)
+            const pool = await mssql.connect(config);
+            const result = await pool.request().query(sql);
+    
+            res.json({
+                count: result.recordset.length,
+                utilisateurs: result.recordset
+            });
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ Erreur: error.toString() });
+        }
+    }
+
+    async update(req, res) {
+        console.log(`Contacts.update()`.yellow);
+        const id = req.params.id;
+        const data = req.body;
+        console.log(data);
+    
+        try {
+            const pool = await mssql.connect(config);
+    
+            // Construct SET clause dynamically
+            const setClause = Object.keys(data)
+                .map(key => `${key} = @${key}`)
+                .join(', ');
+    
+            const sql = `UPDATE CONTACTS SET ${setClause} WHERE CCT_NUMERO = @id`;
+    
+            // Create input parameters for each key in the data object
+            const request = pool.request();
+            Object.keys(data).forEach(key => {
+                request.input(key, mssql.NVarChar, data[key]);
+            });
+            request.input('id', mssql.NVarChar, id);
+    
+            const result = await request.query(sql);
+    
+            res.json({
+                count: result.rowsAffected[0],
+                utilisateur: data
+            });
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ Erreur: error.toString() });
+        }
+    }
+
     async getTop(top) {
         if (!Number.isInteger(Number(top))) throw `Valeur du paramètre "top" invalide : ${top}`
         const pool = await mssql.connect(config)
