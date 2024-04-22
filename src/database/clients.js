@@ -159,8 +159,9 @@ class Clients {
     async getGestimumClients() {
         const pool = await mssql.connect(config)
         const sql = `
-            SELECT PCF_CODE, PCF_RS, PCF_EMAIL, PCF_RUE, PCF_CP, PCF_VILLE, PAY_CODE, PCF_TYPE
+            SELECT PCF_CODE, PCF_RS, PCF_EMAIL, PCF_RUE, PCF_CP, PCF_VILLE, PAY_CODE, PCF_TYPE, FAT_CODE, SFT_CODE, XXX_AA9 as Contrat, XXX_AA8 as FIN_CONTRAT
             FROM TIERS
+            WHERE PCF_TYPE IN ('C')
             ORDER BY PCF_RS, PCF_TYPE
         `
         const res = await pool.request().query(sql)
